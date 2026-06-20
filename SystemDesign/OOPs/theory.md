@@ -91,3 +91,60 @@ class Motorcycle(Vehicle):
 bike = Motorcycle()
 print(bike.start_engine())
 ```
+
+
+
+## Python Property Decorators Quick Reference
+
+The `@property` ecosystem allows methods to behave like standard attributes. This enables clean syntax while maintaining strict control over data validation, formatting, and access.
+
+### Core Components
+
+#### 1. `@property` (The Getter)
+* **Purpose:** Defines an attribute's read behavior or generates a value dynamically.
+* **Syntax:** `obj.attribute` (executed without parentheses `()`).
+* **Requirement:** Must accept only `self` and must explicitly `return` a value.
+* **Ordering:** Must always be defined **first** in the class block.
+
+#### 2. `@<attribute>.setter` (The Setter)
+* **Purpose:** Defines an attribute's write behavior and runs validation code during assignments.
+* **Syntax:** `obj.attribute = new_value`
+* **Requirement:** Must accept `self` and exactly one value argument (`new_value`).
+* **Ordering:** Must be defined **after** its corresponding `@property`.
+
+#### 3. `@<attribute>.deleter` (The Deleter)
+* **Purpose:** Cleans up underlying data or handles dependencies when an attribute is removed.
+* **Syntax:** `del obj.attribute`
+* **Requirement:** Must accept only `self`.
+
+### Implementation Template
+
+```python
+class ManagedAttribute:
+    def __init__(self, value):
+        # Store data in a protected variable using a leading underscore
+        self._var = value  
+
+    @property
+    def var(self):
+        """Getter: Triggers on reading."""
+        return self._var
+
+    @var.setter
+    def var(self, new_value):
+        """Setter: Triggers on assignment (=)."""
+        if new_value < 0:
+            raise ValueError("Values cannot be negative")
+        self._var = new_value
+
+    @var.deleter
+    def var(self):
+        """Deleter: Triggers on deletion (del)."""
+        del self._var
+```
+
+### 3 Golden Rules for Usage
+
+1. **Name Matching:** The method name under `@property`, `@var.setter`, and `@var.deleter` must be **identical** (e.g., `def var(self):`).
+2. **Avoid Loops:** Internal methods must access the protected backing variable (`self._var`) instead of the property interface (`self.var`). Accessing `self.var` inside the getter or setter triggers an infinite recursion crash.
+3. **Implicit Execution:** Users interacting with your class do not need to know these decorators exist. They use standard dot notation assignments seamlessly.
