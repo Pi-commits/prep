@@ -1,5 +1,93 @@
-OOPs Doc
-1. Encapsulation
-2. Abstraction
-3. Inheritance
-4. Polymorphism
+# OOPs Doc
+
+## Encapsulation
+Encapsulation wraps data and methods into a single unit and restricts direct access to prevent unauthorized modification. Python enforces this convention using prefixes:
+
+* **Protected (single underscore `_`):** Suggests a variable shouldn't be accessed outside the class hierarchy.
+* **Private (double underscore `__`):** Triggers name mangling, making it harder to access directly from outside.
+
+```python
+class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner = owner
+        self.__balance = balance  # Private attribute
+
+    # Getter method to safely access private data
+    def get_balance(self):
+        return self.__balance
+
+    # Setter method to safely modify private data
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+
+account = BankAccount("Alice", 1000)
+account.deposit(500)
+print(account.get_balance())  # Output: 1500
+# print(account.__balance)    # Throws AttributeError
+```
+
+## Inheritance
+Inheritance allows a new class (child) to adopt the attributes and methods of an existing class (parent), minimizing code repetition. You can use the `super()` function to call the parent class's constructor or methods.
+
+```python
+# Parent class
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def eat(self):
+        return f"{self.name} is eating."
+
+# Child class inheriting from Animal
+class Dog(Animal):
+    def bark(self):
+        return f"{self.name} says Woof!"
+
+my_dog = Dog("Buddy")
+print(my_dog.eat())   # Inherited method: Buddy is eating.
+print(my_dog.bark())  # Child method: Buddy says Woof!
+```
+
+## Polymorphism
+Polymorphism literally means "many forms". It allows different classes to share the exact same method name but implement different behaviors. This is often achieved via method overriding in inheritance.
+
+```python
+class Cat:
+    def make_sound(self):
+        return "Meow"
+
+class Dog:
+    def make_sound(self):
+        return "Bark"
+
+# A unified interface handling different object types
+def animal_sound(animal_object):
+    print(animal_object.make_sound())
+
+cat = Cat()
+dog = Dog()
+
+animal_sound(cat)  # Output: Meow
+animal_sound(dog)  # Output: Bark
+```
+
+## Abstraction
+Abstraction hides complicated internal structures and only displays the necessary features to the user. Python implements abstraction using the `abc` (Abstract Base Classes) module. You cannot create an instance of an abstract class directly; it forces child classes to implement specific methods.
+
+```python
+from abc import ABC, abstractmethod
+
+class Vehicle(ABC):  # Abstract Base Class
+    @abstractmethod
+    def start_engine(self):
+        pass
+
+class Motorcycle(Vehicle):
+    def start_engine(self):
+        return "Motorcycle engine started. Vroom!"
+
+# my_vehicle = Vehicle() # Throws TypeError: Can't instantiate abstract class
+bike = Motorcycle()
+print(bike.start_engine())
+```
